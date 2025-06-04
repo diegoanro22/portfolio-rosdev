@@ -1,21 +1,37 @@
 // app/page.tsx
-"use client";
-import React from "react";
-import Particles from "@/app/components/Particles/Particles";
-import GuitarSpline from "@/app/components/GuitarSpline";
-import SplitText from "@/app/components/SplitText/SplitText";
+'use client';
 
-const handleAnimationComplete = () => {
-  console.log('All letters have animated!');
-};
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
+import Particles from '@/app/components/Particles/Particles';
+import GuitarSpline from '@/app/components/GuitarSpline';
 
 export default function Home() {
+  const [clicked, setClicked] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!clicked) return;
+    const timer = setTimeout(() => {
+      router.push('/home');
+    }, 3550);
+    return () => clearTimeout(timer);
+  }, [clicked, router]);
+
+  const handleGuitarClick = () => {
+    if (!clicked) {
+      setClicked(true);
+    }
+  };
+
   return (
     <div className="relative w-screen h-screen overflow-hidden bg-black">
-      {/* Fondo de partículas */}
+      {/* ───────────────────────────────────────────────────────── */}
+      {/* 1) Fondo de partículas */}
       <div className="absolute inset-0">
         <Particles
-          particleColors={["#ffffff", "#ffffff"]}
+          particleColors={['#ffffff', '#ffffff']}
           particleCount={200}
           particleSpread={10}
           speed={0.1}
@@ -25,26 +41,20 @@ export default function Home() {
           disableRotation={false}
         />
       </div>
-      <SplitText
-        text="Hello, GSAP!"
-        className="text-2xl font-semibold text-center"
-        delay={100}
-        duration={0.6}
-        ease="power3.out"
-        splitType="chars"
-        from={{ opacity: 0, y: 40 }}
-        to={{ opacity: 1, y: 0 }}
-        threshold={0.1}
-        rootMargin="-100px"
-        textAlign="center"
-        onLetterAnimationComplete={handleAnimationComplete}
-      />
 
-      {/* Contenido centrado: caja 16:9 responsive */}
+      {/* ───────────────────────────────────────────────────────── */}
+      {/* 2) Guitarra Splines envuelta en un motion.div para animar su salida */}
       <div className="absolute inset-0 flex items-center justify-center px-4">
-        <div className="w-full max-w-4xl">
-          <GuitarSpline />
-        </div>
+        <motion.div
+          // Inicial: guitarra en el centro, completamente opaca
+          initial={{ y: 0, opacity: 1, scale: 1 }}
+          // Si clicked === true, animamos: sube 600px, se desvanece y hace un pequeño zoom out
+          animate={clicked ? { y: -600, opacity: 0, scale: 0.8 } : { y: 0, opacity: 1, scale: 1 }}
+          transition={{ duration: 4, ease: 'easeInOut' }}
+          className="w-full max-w-4xl h-auto pointer-events-auto"
+        >
+          <GuitarSpline onGuitarClick={handleGuitarClick} />
+        </motion.div>
       </div>
     </div>
   );
