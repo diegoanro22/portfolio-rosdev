@@ -1,50 +1,47 @@
 // components/Projects.tsx
-import React from "react";
-
-interface Project {
-  title: string;
-  description: string;
-  technologies: string[];
-  repoLink: string;
-  demoLink?: string;
-}
-
-const proyectos: Project[] = [
-  {
-    title: "Proyecto 1: Lab de DB",
-    description:
-      "Implementación de CRUD en PostgreSQL con Next.js y Prisma. Incluye vistas y triggers.",
-    technologies: ["Next.js", "Prisma", "PostgreSQL", "TypeScript"],
-    repoLink: "https://github.com/usuario/lab-db",
-    demoLink: "https://lab-db.vercel.app",
-  },
-  {
-    title: "Proyecto 2: E-Commerce Guitarras",
-    description:
-      "Tienda en línea de guitarras con React, API REST y carrito de compras en localStorage.",
-    technologies: ["React", "Tailwind CSS", "Node.js", "MongoDB"],
-    repoLink: "https://github.com/usuario/ecommerce-guitarras",
-    demoLink: "https://ecommerce-guitarras.netlify.app",
-  },
-  {
-    title: "Proyecto 3: Blog de Música",
-    description:
-      "CMS sencillo de blog usando Next.js + MDX. Publica entradas con reseñas de álbumes y posts musicales.",
-    technologies: ["Next.js", "MDX", "Tailwind CSS"],
-    repoLink: "https://github.com/usuario/blog-musica",
-    demoLink: "https://blog-musica.vercel.app",
-  },
-];
+import React, { useEffect } from "react";
+import { proyectos, Project } from "@/app/utils/Projects";
+import DecryptedText from "./DecryptedText/DecryptedText";
 
 export default function Projects() {
+  useEffect(() => {
+    const reveals = document.querySelectorAll<HTMLElement>(".reveal");
+    if (!reveals.length) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+          } else {
+            entry.target.classList.remove("visible");
+          }
+        });
+      },
+      { threshold: 0.3 }
+    );
+
+    reveals.forEach((el) => observer.observe(el));
+    return () => {
+      reveals.forEach((el) => observer.unobserve(el));
+    };
+  }, []);
+
   return (
-    <section id="projects" className="py-16  text-gray-900 text-center">
-      <h2 className="text-4xl font-bold mb-12">Proyectos</h2>
+    <section id="projects" className="py-16 text-gray-100">
+      <div className="reveal text-5xl font-bold font-share-tech mb-8 text-center">
+        <DecryptedText text="Mis Proyectos" />
+      </div>
       <div className="container mx-auto px-4 grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-        {proyectos.map((proj) => (
+        {proyectos.map((proj: Project) => (
           <div
             key={proj.title}
-            className="flex flex-col bg-white shadow-md rounded-lg overflow-hidden hover:shadow-xl transition-shadow"
+            className="
+              reveal
+              flex flex-col 
+              bg-white shadow-md rounded-lg overflow-hidden 
+              hover:-translate-y-1
+            "
           >
             <div className="p-6 flex flex-col flex-grow">
               <h3 className="text-2xl font-semibold mb-2">{proj.title}</h3>
@@ -64,7 +61,10 @@ export default function Projects() {
                   href={proj.repoLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-900 transition"
+                  className="
+                    px-4 py-2 bg-gray-800 text-white rounded 
+                    hover:bg-gray-900 transition-colors duration-200
+                  "
                 >
                   Repositorio
                 </a>
@@ -73,7 +73,10 @@ export default function Projects() {
                     href={proj.demoLink}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-4 py-2 border border-gray-800 text-gray-800 rounded hover:bg-gray-200 transition"
+                    className="
+                      px-4 py-2 border border-gray-800 text-gray-800 rounded 
+                      hover:bg-gray-200 transition-colors duration-200
+                    "
                   >
                     Ver Demo
                   </a>

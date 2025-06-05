@@ -31,3 +31,16 @@ body {
 html {
   scroll-behavior: smooth;
 }
+
+.reveal {
+  opacity: 0;
+  transform: translateY(50px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+/* Cuando reciba la clase .visible, pasa a estar totalmente opaco 
+   y sin desplazamiento vertical. */
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
