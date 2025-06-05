@@ -3,7 +3,7 @@
 
 import React, { useEffect } from "react"
 import DecryptedText from "./DecryptedText/DecryptedText"
-import { FaLinkedin, FaInstagram } from "react-icons/fa"
+import { FaLinkedin, FaInstagram, FaGithub } from "react-icons/fa"
 
 export default function Contact() {
   // “Reveal on scroll” para Contact
@@ -58,14 +58,14 @@ export default function Contact() {
             name="email"
             placeholder="Correo"
             required
-            className="border border-gray-700 rounded px-4 py-2  placeholder-gray-400 font-share-tech focus:outline-none focus:ring-2 focus:ring-indigo-600 transition"
+            className="border border-gray-700 rounded px-4 py-2 placeholder-gray-400 font-share-tech focus:outline-none focus:ring-2 focus:ring-indigo-600 transition"
           />
           <textarea
             name="message"
             rows={5}
             placeholder="Mensaje"
             required
-            className="border border-gray-700 rounded px-4 py-2  placeholder-gray-400 font-share-tech focus:outline-none focus:ring-2 focus:ring-indigo-600 transition"
+            className="border border-gray-700 rounded px-4 py-2 placeholder-gray-400 font-share-tech focus:outline-none focus:ring-2 focus:ring-indigo-600 transition"
           />
           <button
             type="submit"
@@ -87,6 +87,15 @@ export default function Contact() {
             <FaLinkedin size={30} />
           </a>
           <a
+            href="https://github.com/diegoanro22"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-white hover:text-gray-400 transition"
+            aria-label="GitHub"
+          >
+            <FaGithub size={30} />
+          </a>
+          <a
             href="https://www.instagram.com/_rosaless.v/"
             target="_blank"
             rel="noopener noreferrer"
@@ -98,7 +107,7 @@ export default function Contact() {
           <a
             href="/CV.pdf"
             download
-            className="flex items-center space-x-2 px-4 py-2 bg-indigo-600 text-white font-share-tech rounded hover:bg-indigo-700 transition"
+            className="flex items-center space-x-2 px-4 py-1 bg-indigo-600 text-white font-share-tech rounded hover:bg-indigo-700 transition"
             aria-label="Descargar CV"
           >
             <span>Descargar CV</span>
