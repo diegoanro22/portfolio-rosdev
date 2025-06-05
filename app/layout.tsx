@@ -2,6 +2,8 @@
 import type { Metadata } from "next";
 import { Share_Tech } from "next/font/google";
 import "./globals.css";
+import { AudioProvider } from "./contexts/AudioContext";
+
 
 const share_tech = Share_Tech({
   subsets: ["latin"],
@@ -22,7 +24,7 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className={`${share_tech.variable} antialiased`}>
-        {children}
+        <AudioProvider>{children}</AudioProvider>
       </body>
     </html>
   );

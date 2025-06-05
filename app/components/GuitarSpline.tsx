@@ -1,17 +1,18 @@
 // src/app/components/GuitarSpline.tsx
 'use client';
-import React, { useRef } from 'react';
+import React, {  } from 'react';
 import Spline from '@splinetool/react-spline';
+import { useAudio } from '@/app/contexts/AudioContext';
 
 interface GuitarSplineProps {
   onGuitarClick?: () => void;
 }
 
 const GuitarSpline: React.FC<GuitarSplineProps> = ({ onGuitarClick }) => {
-  const audioRef = useRef<HTMLAudioElement>(null);
+  const {audioRef} = useAudio();
   const splineSceneUrl = 'https://prod.spline.design/6j-Q7nxkmFqoYOS9/scene.splinecode';
 
-  const handleClick = (_e: any) => {
+  const handleClick = () => {
     // 1) Reproducimos el audio
     if (audioRef.current) {
       audioRef.current.currentTime = 0;
@@ -27,7 +28,6 @@ const GuitarSpline: React.FC<GuitarSplineProps> = ({ onGuitarClick }) => {
     <div className="relative w-full h-0 pb-[56.25%]">
       <div className="absolute inset-0">
         <Spline scene={splineSceneUrl} onMouseDown={handleClick} />
-        <audio ref={audioRef} src="/sounds/fairy_fountain.mp3" preload="auto" />
       </div>
     </div>
   );

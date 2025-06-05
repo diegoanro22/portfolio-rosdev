@@ -4,12 +4,14 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
+import { useAudio } from './contexts/AudioContext';
 import Particles from '@/app/components/Particles/Particles';
 import GuitarSpline from '@/app/components/GuitarSpline';
 
 export default function Home() {
   const [clicked, setClicked] = useState(false);
   const router = useRouter();
+  const { audioRef } = useAudio();
 
   useEffect(() => {
     if (!clicked) return;
@@ -20,9 +22,12 @@ export default function Home() {
   }, [clicked, router]);
 
   const handleGuitarClick = () => {
-    if (!clicked) {
-      setClicked(true);
+    if (clicked) return;
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0;
+      audioRef.current.play();
     }
+    setClicked(true);
   };
 
   return (
