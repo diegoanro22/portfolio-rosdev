@@ -17,7 +17,7 @@ export interface GooeyNavProps {
   colors?: number[];
   initialActiveIndex?: number;
   /** 
-   * Si se provee `activeIndex`, GooeyNav se vuelve “controlado”: 
+   * Si se provee `activeIndex`, GooeyNav se vuelve "controlado": 
    * la sección padre (Navbar) decide qué índice está activo. 
    * Si NO se pasa, GooeyNav usa su propio estado interno. 
    */
@@ -33,7 +33,7 @@ const GooeyNav: React.FC<GooeyNavProps> = ({
   timeVariance = 300,
   colors = [1, 2, 3, 1, 2, 3, 1, 4],
   initialActiveIndex = 0,
-  activeIndex: controlledActiveIndex, // nuevo prop
+  activeIndex: controlledActiveIndex,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const navRef = useRef<HTMLUListElement>(null);
@@ -43,12 +43,10 @@ const GooeyNav: React.FC<GooeyNavProps> = ({
   // 1) Estado interno: solo si no viene `controlledActiveIndex`
   const [internalActiveIndex, setInternalActiveIndex] = useState<number>(initialActiveIndex);
 
-  // 2) Definimos cuál será el índice “activo” real:
+  // 2) Definimos cuál será el índice "activo" real:
   const activeIndex = controlledActiveIndex !== undefined
     ? controlledActiveIndex
     : internalActiveIndex;
-
-  // ... resto de helpers (noise, getXY, createParticle, etc.) idénticos a tu versión actual de GooeyNav ...
 
   const noise = (n = 1) => n / 2 - Math.random() * n;
   const getXY = (distance: number, pointIndex: number, totalPoints: number): [number, number] => {
@@ -56,7 +54,7 @@ const GooeyNav: React.FC<GooeyNavProps> = ({
     return [distance * Math.cos(angle), distance * Math.sin(angle)];
   };
   const createParticle = (i: number, t: number, d: [number, number], r: number) => {
-    let rotate = noise(r / 10);
+    const rotate = noise(r / 10);
     return {
       start: getXY(d[0], particleCount - i, particleCount),
       end: getXY(d[1] + noise(7), particleCount - i, particleCount),
@@ -122,7 +120,7 @@ const GooeyNav: React.FC<GooeyNavProps> = ({
     const liEl = e.currentTarget;
     if (activeIndex === index) return;
 
-    // Actualizo estado interno SOLO si NO estoy en modo “controlado”
+    // Actualizo estado interno SOLO si NO estoy en modo "controlado"
     if (controlledActiveIndex === undefined) {
       setInternalActiveIndex(index);
     }
@@ -142,7 +140,7 @@ const GooeyNav: React.FC<GooeyNavProps> = ({
     }
   };
 
-  // 4) Si `activeIndex` cambia (por prop externo), actualizo la posición de la “filtro/efecto”
+  // 4) Si `activeIndex` cambia (por prop externo), actualizo la posición de la "filtro/efecto"
   useEffect(() => {
     if (!navRef.current || !containerRef.current) return;
     const allLi = navRef.current.querySelectorAll("li");
@@ -166,12 +164,19 @@ const GooeyNav: React.FC<GooeyNavProps> = ({
       if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
         const liEl = e.currentTarget.parentElement;
-        if (liEl) {
-          handleClick({ currentTarget: liEl } as any, index);
+        if (liEl && liEl instanceof HTMLLIElement) {
+          // Crear un evento mock que cumple con la interfaz MouseEvent
+          const mockEvent = {
+            currentTarget: liEl,
+            preventDefault: () => {},
+            stopPropagation: () => {},
+          } as React.MouseEvent<HTMLLIElement>;
+          
+          handleClick(mockEvent, index);
         }
       }
     },
-    [activeIndex]
+    [activeIndex, controlledActiveIndex, handleClick]
   );
 
   return (
@@ -333,7 +338,7 @@ const GooeyNav: React.FC<GooeyNavProps> = ({
                 }`}
                 onClick={(e) => {
                   // 1) Si el padre NO controla activeIndex, actualizamos el estado interno aquí:
-                  handleClick(e as React.MouseEvent<HTMLLIElement>, index);
+                  handleClick(e, index);
                   // 2) Luego hacemos scroll a la sección correspondiente:
                   e.preventDefault();
                   const id = item.href.replace("#", "");
