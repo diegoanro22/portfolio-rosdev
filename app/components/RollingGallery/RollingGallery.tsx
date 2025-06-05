@@ -1,3 +1,4 @@
+// components/RollingProjects.tsx
 import React, { useEffect, useState } from "react";
 import {
   motion,
@@ -7,36 +8,25 @@ import {
   PanInfo,
   ResolvedValues,
 } from "framer-motion";
+import { proyectos, Project } from "@/app/utils/Projects"
 
-const IMGS: string[] = [
-  "https://images.unsplash.com/photo-1528181304800-259b08848526?q=80&w=3870&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://images.unsplash.com/photo-1506665531195-3566af2b4dfa?q=80&w=3870&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?q=80&w=3456&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://images.unsplash.com/photo-1495103033382-fe343886b671?q=80&w=3870&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://images.unsplash.com/photo-1506781961370-37a89d6b3095?q=80&w=3264&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://images.unsplash.com/photo-1599576838688-8a6c11263108?q=80&w=3870&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://images.unsplash.com/photo-1494094892896-7f14a4433b7a?q=80&w=3870&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://plus.unsplash.com/premium_photo-1664910706524-e783eed89e71?q=80&w=3869&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://images.unsplash.com/photo-1503788311183-fa3bf9c4bc32?q=80&w=3870&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://images.unsplash.com/photo-1585970480901-90d6bb2a48b5?q=80&w=3774&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-];
-
-interface RollingGalleryProps {
+interface RollingProjectsProps {
   autoplay?: boolean;
   pauseOnHover?: boolean;
-  images?: string[];
+  projects?: Project[];
 }
 
-const RollingGallery: React.FC<RollingGalleryProps> = ({
+const RollingProjects: React.FC<RollingProjectsProps> = ({
   autoplay = false,
   pauseOnHover = false,
-  images = [],
+  projects = [],
 }) => {
-  // Use default images if none are provided
-  const galleryImages = images.length > 0 ? images : IMGS;
+  // Si no se pasan por props, usa el array importado
+  const galleryItems = projects.length > 0 ? projects : proyectos;
 
+  // Estado para detectar pantalla pequeña (≤ 640px)
   const [isScreenSizeSm, setIsScreenSizeSm] = useState<boolean>(
-    window.innerWidth <= 640,
+    typeof window !== "undefined" ? window.innerWidth <= 640 : false
   );
   useEffect(() => {
     const handleResize = () => setIsScreenSizeSm(window.innerWidth <= 640);
@@ -44,23 +34,24 @@ const RollingGallery: React.FC<RollingGalleryProps> = ({
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // 3D geometry calculations
-  const cylinderWidth: number = isScreenSizeSm ? 1100 : 1800;
-  const faceCount: number = galleryImages.length;
-  const faceWidth: number = (cylinderWidth / faceCount) * 1.5;
+  // Dimensiones del cilindro (ajústalas según el tamaño de tus tarjetas)
+  // En móvil, lo hacemos más pequeño para que quepa bien:
+  const cylinderWidth: number = isScreenSizeSm ? 800 : 1200;
+  const faceCount: number = galleryItems.length;
+  // Multiplicamos por 1.3 para permitir algo de padding horizontal
+  const faceWidth: number = (cylinderWidth / faceCount) * 1.3;
   const radius: number = cylinderWidth / (2 * Math.PI);
 
-  // Framer Motion values and controls
+  // Framer Motion: valores y animaciones
   const dragFactor: number = 0.05;
   const rotation = useMotionValue(0);
   const controls = useAnimation();
-
-  // Create a 3D transform based on the rotation motion value
   const transform = useTransform(
     rotation,
-    (val: number) => `rotate3d(0,1,0,${val}deg)`,
+    (val: number) => `rotate3d(0,1,0,${val}deg)`
   );
 
+  // Inicia giro infinito con framer-motion
   const startInfiniteSpin = (startAngle: number) => {
     controls.start({
       rotateY: [startAngle, startAngle - 360],
@@ -72,6 +63,7 @@ const RollingGallery: React.FC<RollingGalleryProps> = ({
     });
   };
 
+  // Cada vez que cambie autoplay, arrancamos o detenemos
   useEffect(() => {
     if (autoplay) {
       const currentAngle = rotation.get();
@@ -90,7 +82,7 @@ const RollingGallery: React.FC<RollingGalleryProps> = ({
 
   const handleDrag = (
     _: MouseEvent | TouchEvent | PointerEvent,
-    info: PanInfo,
+    info: PanInfo
   ): void => {
     controls.stop();
     rotation.set(rotation.get() + info.offset.x * dragFactor);
@@ -98,7 +90,7 @@ const RollingGallery: React.FC<RollingGalleryProps> = ({
 
   const handleDragEnd = (
     _: MouseEvent | TouchEvent | PointerEvent,
-    info: PanInfo,
+    info: PanInfo
   ): void => {
     const finalAngle = rotation.get() + info.velocity.x * dragFactor;
     rotation.set(finalAngle);
@@ -122,6 +114,7 @@ const RollingGallery: React.FC<RollingGalleryProps> = ({
 
   return (
     <div className="relative h-[500px] w-full overflow-hidden">
+      {/* Overlays en los bordes para sombrear */}
       <div
         className="absolute top-0 left-0 h-full w-[48px] z-10"
         style={{
@@ -136,6 +129,8 @@ const RollingGallery: React.FC<RollingGalleryProps> = ({
             "linear-gradient(to right, rgba(0,0,0,0) 0%, #060606 100%)",
         }}
       />
+
+      {/* Contenedor 3D */}
       <div className="flex h-full items-center justify-center [perspective:1000px] [transform-style:preserve-3d]">
         <motion.div
           drag="x"
@@ -154,20 +149,51 @@ const RollingGallery: React.FC<RollingGalleryProps> = ({
           }}
           className="flex min-h-[200px] cursor-grab items-center justify-center [transform-style:preserve-3d]"
         >
-          {galleryImages.map((url, i) => (
+          {galleryItems.map((proj, i) => (
             <div
               key={i}
-              className="group absolute flex h-fit items-center justify-center p-[8%] [backface-visibility:hidden] md:p-[6%]"
+              className="group absolute flex flex-col h-[200px] w-[260px] rounded-lg bg-white p-4 text-left shadow-lg [backface-visibility:hidden] sm:h-[180px] sm:w-[220px]"
               style={{
                 width: `${faceWidth}px`,
+                // Posiciona cada tarjeta en su ángulo correspondiente
                 transform: `rotateY(${(360 / faceCount) * i}deg) translateZ(${radius}px)`,
               }}
             >
-              <img
-                src={url}
-                alt="gallery"
-                className="pointer-events-none h-[120px] w-[300px] rounded-[15px] border-[3px] border-white object-cover transition-transform duration-300 ease-out group-hover:scale-105 sm:h-[100px] sm:w-[220px]"
-              />
+              {/* Contenido de la tarjeta */}
+              <h3 className="text-lg font-semibold mb-1">{proj.title}</h3>
+              <p className="text-xs text-gray-600 flex-grow">
+                {proj.description}
+              </p>
+              <ul className="flex flex-wrap gap-1 mt-2">
+                {proj.technologies.map((tech) => (
+                  <li
+                    key={tech}
+                    className="bg-indigo-100 text-indigo-800 text-[10px] px-2 py-0.5 rounded"
+                  >
+                    {tech}
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-auto flex gap-2">
+                <a
+                  href={proj.repoLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-white bg-gray-800 px-2 py-1 rounded hover:bg-gray-900 transition-colors"
+                >
+                  Repo
+                </a>
+                {proj.demoLink && (
+                  <a
+                    href={proj.demoLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs text-gray-800 border border-gray-800 px-2 py-1 rounded hover:bg-gray-200 transition-colors"
+                  >
+                    Demo
+                  </a>
+                )}
+              </div>
             </div>
           ))}
         </motion.div>
@@ -176,4 +202,4 @@ const RollingGallery: React.FC<RollingGalleryProps> = ({
   );
 };
 
-export default RollingGallery;
+export default RollingProjects;

@@ -31,7 +31,7 @@ export default function HomeMain() {
               behavior: "smooth",
             })
           }
-          className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md transition"
+          className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 font-share-tech text-white rounded-md transition"
         >
           Ver Proyectos
         </button>
@@ -41,7 +41,7 @@ export default function HomeMain() {
               behavior: "smooth",
             })
           }
-          className="px-6 py-3 border border-white text-white hover:bg-white hover:text-gray-900 rounded-md transition"
+          className="px-6 py-3 border border-white text-white font-share-tech hover:bg-white hover:text-gray-900 rounded-md transition"
         >
           Contáctame
         </button>
