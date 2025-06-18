@@ -3,7 +3,7 @@
 
 import React, { useEffect } from "react"
 import DecryptedText from "./DecryptedText/DecryptedText"
-import { FaLinkedin, FaInstagram, FaGithub } from "react-icons/fa"
+import { FaLinkedin, FaGithub } from "react-icons/fa"
 
 export default function Contact() {
   // “Reveal on scroll” para Contact
@@ -94,15 +94,6 @@ export default function Contact() {
             aria-label="GitHub"
           >
             <FaGithub size={30} />
-          </a>
-          <a
-            href="https://www.instagram.com/_rosaless.v/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-white hover:text-pink-400 transition"
-            aria-label="Instagram"
-          >
-            <FaInstagram size={30} />
           </a>
           <a
             href="/CV.pdf"
